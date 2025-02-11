@@ -1,0 +1,45 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <button id="myDiv">click me</button>
+    <button id="hoverBox">mouseover</button>
+    <!-- <button id="hoverBox">mouseout</button> -->
+    <input type="text" id="keydown">
+
+
+    <script>
+        // click 
+        document.getElementById("myDiv").addEventListener("click", function () {
+            this.style.backgroundColor = "yellow";
+        });
+
+
+        // mouseover $ mouseout
+        document.getElementById("hoverBox").addEventListener("mouseover", function () {
+            this.style.color = "red";
+        });
+        document.getElementById("hoverBox").addEventListener("mouseout", function () {
+            this.style.color = "blue";
+        });
+
+        //keydown $ keyup
+        document.addEventListener("keydown", function (event) {
+            console.log("Key pressed: " + event.key);
+        });
+
+
+        //load
+        window.addEventListener("load", function () {
+            console.log("Page fully loaded");
+        });
+
+    </script>
+</body>
+
+</html>

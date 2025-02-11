@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iframe Example</title>
+    <style>
+        iframe {
+            width: 100%;
+            height: 500px;
+            border: 1px solid #000;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Main Page (index.html)</h1>
+    <button onclick="loadPage()">Load Page Inside</button>
+    
+    <iframe id="contentFrame" src="" title="Embedded Page"></iframe>
+
+    <script>
+        function loadPage() {
+            document.getElementById("contentFrame").src = "page.html";
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Window Events Example</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            height: 200vh;
+            /* Makes the page scrollable */
+        }
+
+        #log {
+            border: 1px solid #000;
+            padding: 10px;
+            height: 150px;
+            overflow-y: auto;
+            background: #f9f9f9;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>JavaScript Window Events</h1>
+    <p>Resize, scroll, change tabs, or reload to see events in action.</p>
+
+    <h3>Event Log:</h3>
+    <div id="log"></div>
+
+    <script>
+        // Function to log events
+        function logEvent(message) {
+            const logDiv = document.getElementById("log");
+            const time = new Date().toLocaleTimeString();
+            logDiv.innerHTML += `[${time}] ${message} <br>`;
+            logDiv.scrollTop = logDiv.scrollHeight; // Auto scroll to bottom
+        }
+
+        // 1️⃣ Window Load Event (Runs when the page is fully loaded)
+        window.addEventListener("load", function () {
+            logEvent("Page has fully loaded.");
+        });
+
+        // 2️⃣ Window Scroll Event (Detects scrolling)
+        window.addEventListener("scroll", function () {
+            logEvent("User scrolled the page.");
+        });
+
+        // 3️⃣ Window Resize Event (Detects when the window size changes)
+        window.addEventListener("resize", function () {
+            logEvent(`Window resized to ${window.innerWidth}x${window.innerHeight}`);
+        });
+
+        // 4️⃣ Window Focus Event (When user focuses back on the page)
+        window.addEventListener("focus", function () {
+            logEvent("Window is in focus.");
+        });
+
+        // 5️⃣ Window Blur Event (When user switches to another tab)
+        window.addEventListener("blur", function () {
+            logEvent("Window lost focus.");
+        });
+
+        // 6️⃣ Window BeforeUnload Event (Warns user before leaving the page)
+        window.addEventListener("beforeunload", function (event) {
+            logEvent("User is trying to leave the page.");
+            event.returnValue = "Are you sure you want to leave?";
+        });
+
+    </script>
+
+</body>
+
+</html>

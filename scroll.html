@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scroll Events Example</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            height: 200vh;
+            /* Make the page scrollable */
+        }
+
+        .section {
+            height: 500px;
+            background: lightblue;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        #topBtn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background: red;
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: none;
+            font-size: 18px;
+        }
+
+        #log {
+            border: 1px solid #000;
+            padding: 10px;
+            height: 150px;
+            overflow-y: auto;
+            background: #f9f9f9;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>JavaScript Scroll Events</h1>
+    <button onclick="scrollToSection()">Scroll to Section</button>
+    <button onclick="toggleScroll()">Toggle Scroll Lock</button>
+
+    <h3>Scroll Event Log:</h3>
+    <div id="log"></div>
+
+    <div class="section" style="background: lightcoral;">Section 1</div>
+    <div class="section" id="targetSection">Target Section (Scroll Here)</div>
+    <div class="section" style="background: lightgreen;">Section 3</div>
+
+    <button id="topBtn" onclick="scrollToTop()">⬆ Top</button>
+
+    <script >
+        // Function to log scroll events
+        function logEvent(message) {
+            const logDiv = document.getElementById("log");
+            const time = new Date().toLocaleTimeString();
+            logDiv.innerHTML += `[${time}] ${message} <br>`;
+            logDiv.scrollTop = logDiv.scrollHeight; // Auto scroll log to the latest event
+        }
+
+        // 1️⃣ Detecting Scroll Position
+        window.addEventListener("scroll", function () {
+            let scrollY = window.scrollY;
+            logEvent("Scroll Position: " + scrollY);
+
+            // 2️⃣ Show/Hide Scroll to Top Button
+            let topBtn = document.getElementById("topBtn");
+            if (scrollY > 300) {
+                topBtn.style.display = "block";
+            } else {
+                topBtn.style.display = "none";
+            }
+        });
+
+        // 3️⃣ Scroll Up/Down Detection
+        let lastScrollY = window.scrollY;
+        window.addEventListener("scroll", function () {
+            let currentScrollY = window.scrollY;
+
+            if (currentScrollY > lastScrollY) {
+                logEvent("Scrolling Down ⬇️");
+            } else {
+                logEvent("Scrolling Up ⬆️");
+            }
+
+            lastScrollY = currentScrollY;
+        });
+
+        // 4️⃣ Scroll to Top Function
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+            logEvent("Scrolled to Top");
+        }
+
+        // 5️⃣ Scroll to a Specific Section
+        function scrollToSection() {
+            document.getElementById("targetSection").scrollIntoView({
+                behavior: "smooth"
+            });
+            logEvent("Scrolled to Target Section");
+        }
+
+        // 6️⃣ Toggle Scroll Lock
+        let isScrollLocked = false;
+        function toggleScroll() {
+            if (isScrollLocked) {
+                document.body.style.overflow = "auto";
+                logEvent("Scrolling Enabled");
+            } else {
+                document.body.style.overflow = "hidden";
+                logEvent("Scrolling Disabled");
+            }
+            isScrollLocked = !isScrollLocked;
+        }
+
+    </script>
+
+</body>
+
+</html>
