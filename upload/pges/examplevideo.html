@@ -1,0 +1,57 @@
+Here is the updated code for video upload and preview:
+
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Video Upload and Preview</title>
+</head>
+<body>
+  <input type="file" id="profile-video" accept="video/*" />
+  <video id="profile-video-preview" width="400" controls></video>
+  <script>
+    // Get the file input and video preview elements
+    const fileInput = document.getElementById('profile-video');
+    const videoPreview = document.getElementById('profile-video-preview');
+
+    // Add an event listener to the file input
+    fileInput.addEventListener('change', (e) => {
+      // Get the selected file
+      const file = e.target.files[0];
+
+      // Create a FileReader to read the file
+      const reader = new FileReader();
+
+      // Add an event listener to the FileReader
+      reader.addEventListener('load', () => {
+        // Get the video data
+        const videoData = reader.result;
+
+        // Save the video data to local storage
+        localStorage.setItem('profileVideo', videoData);
+
+        // Set the video preview source
+        videoPreview.src = videoData;
+      });
+
+      // Read the file as a data URL
+      reader.readAsDataURL(file);
+    });
+
+    // Check if there is a saved video in local storage
+    const savedVideo = localStorage.getItem('profileVideo');
+
+    // If there is a saved video, set the video preview source
+    if (savedVideo) {
+      videoPreview.src = savedVideo;
+    }
+  </script>
+</body>
+</html>
+
+
+This code uses the same approach as the image upload code, but with a few changes:
+
+- The input element's accept attribute is set to "video/*" to only allow video files to be selected.
+- The video element is used instead of an img element to preview the video.
+- The controls attribute is added to the video element to display video controls.

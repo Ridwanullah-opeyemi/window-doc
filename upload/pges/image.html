@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Upload</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .con {
+            width: 70%;
+            margin: 0 auto;
+            border: solid;
+            padding: 20px;
+        }
+
+        .con input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+        }
+
+        h2 {
+            margin-bottom: 10px;
+        }
+
+        .img {
+            border: solid;
+            width: 100%;
+            height: 30vh;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #3eb969;
+            border-radius: 5px;
+            cursor: pointer;
+            color: white;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="con">
+        <input type="file" id="image-upload">
+        <div>
+            <img id="image-views" class="img">
+            <div class="fileinput">
+                <label for="title">Title : <input type="text" id="title"></label>
+                <label for="texts">Texts : <textarea id="texts"></textarea></label>
+            </div>
+        </div>
+        <button id="submitBTN">Add Data</button>
+    </div>
+
+    <div class="con">
+        <div id="viewResult"></div>
+    </div>
+
+    <script type="module">
+        // Import Firebase SDKs
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.0/firebase-app.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.3.0/firebase-storage.js";
+        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.3.0/firebase-firestore.js";
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyB6J3iRzEyStm2TYk2LbluclZZdjx5wrzU",
+            authDomain: "blog-d0b19.firebaseapp.com",
+            projectId: "blog-d0b19",
+            storageBucket: "blog-d0b19.appspot.com",
+            messagingSenderId: "223199572346",
+            appId: "1:223199572346:web:d0bc53967660154f0026c3"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const storage = getStorage(app);
+        const db = getFirestore(app);
+
+        let imageUpload = document.getElementById("image-upload");
+        let imageViews = document.getElementById("image-views");
+        let title = document.getElementById("title");
+        let texts = document.getElementById("texts");
+        let submitBTN = document.getElementById("submitBTN");
+        let viewResult = document.getElementById("viewResult");
+
+        let selectedFile; // Store selected file
+
+        // Handle file selection
+        imageUpload.addEventListener('change', (e) => {
+            selectedFile = e.target.files[0];
+            if (selectedFile) {
+                const reader = new FileReader();
+                reader.onload = () => {
+                    imageViews.src = reader.result;
+                };
+                reader.readAsDataURL(selectedFile);
+            }
+        });
+
+        // Upload image and save data to Firestore
+        submitBTN.addEventListener('click', async () => {
+            if (!selectedFile) {
+                alert("Please select an image.");
+                return;
+            }
+
+            const titleValue = title.value.trim();
+            const textValue = texts.value.trim();
+
+            if (titleValue === "" || textValue === "") {
+                alert("Please enter both title and text.");
+                return;
+            }
+
+            try {
+                // Upload image to Firebase Storage
+                const storageRef = ref(storage, `images/${Date.now()}_${selectedFile.name}`);
+                const snapshot = await uploadBytes(storageRef, selectedFile);
+                const imageUrl = await getDownloadURL(snapshot.ref);
+
+                // Save post data to Firestore
+                const docRef = await addDoc(collection(db, "blogPosts"), {
+                    title: titleValue,
+                    text: textValue,
+                    imageUrl: imageUrl,
+                    timestamp: serverTimestamp()
+                });
+
+                // Show uploaded content in UI
+                viewResult.innerHTML += `
+                    <div style="margin-bottom: 20px; padding: 10px; border: solid 1px #ccc;">
+                        <img src="${imageUrl}" class="img">
+                        <h2>${titleValue.toUpperCase()}</h2>
+                        <p>${textValue}</p>
+                    </div>
+                `;
+
+                // Reset input fields
+                imageViews.src = "";
+                title.value = "";
+                texts.value = "";
+                imageUpload.value = "";
+
+                alert("Post uploaded successfully!");
+            } catch (error) {
+                console.error("Error uploading:", error);
+                alert("Upload failed. Please try again.");
+            }
+        });
+    </script>
+</body>
+</html>

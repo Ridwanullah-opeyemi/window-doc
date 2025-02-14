@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Recorder</title>
+</head>
+
+<body>
+
+    <button id="start-camera">Start Camera</button>
+    <button id="start-recording">Start Recording</button>
+    <button id="stop-recording">Stop Recording</button>
+    
+    <br><br>
+    
+    <video id="video" width="300" height="200" autoplay></video>
+    <br><br>
+    
+    <!-- Download button as a link -->
+    <a id="download-video" style="display:none;" href="#">Download Video</a>
+    
+
+    <script>
+        // Get the HTML elements
+const startCameraButton = document.getElementById('start-camera');
+const startRecordingButton = document.getElementById('start-recording');
+const stopRecordingButton = document.getElementById('stop-recording');
+const downloadButton = document.getElementById('download-video');
+const video = document.getElementById('video');
+
+let mediaRecorder; // To record the video
+let recordedChunks = []; // Store recorded video data
+
+// 🎥 Start the camera
+startCameraButton.addEventListener('click', () => {
+    navigator.mediaDevices.getUserMedia({ video: true, audio: true }) // Get video and audio
+        .then(stream => {
+            video.srcObject = stream;
+            mediaRecorder = new MediaRecorder(stream); // Prepare to record
+
+            mediaRecorder.ondataavailable = event => {
+                if (event.data.size > 0) {
+                    recordedChunks.push(event.data); // Save video data
+                }
+            };
+
+            mediaRecorder.onstop = () => {
+                const blob = new Blob(recordedChunks, { type: 'video/mp4' }); // Create a video file
+                const url = URL.createObjectURL(blob);
+                downloadButton.href = url;
+                downloadButton.download = "recorded-video.mp4";
+                downloadButton.style.display = "block"; // Show the button after recording
+            };
+        })
+        .catch(error => {
+            alert('Camera access denied or not available.');
+        });
+});
+
+// 🎬 Start recording
+startRecordingButton.addEventListener('click', () => {
+    recordedChunks = []; // Clear previous recordings
+    mediaRecorder.start(); // Start recording
+    alert('Recording started...');
+});
+
+// ⏹ Stop recording
+stopRecordingButton.addEventListener('click', () => {
+    mediaRecorder.stop(); // Stop recording
+    alert('Recording stopped. Click Download to save.');
+});
+
+// 💾 Ensure download button is hidden initially
+downloadButton.style.display = "none";
+
+
+    </script>
+
+</body>
+
+</html>

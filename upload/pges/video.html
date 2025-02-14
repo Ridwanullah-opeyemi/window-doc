@@ -1,0 +1,93 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>upload video</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .con {
+            width: 70%;
+            margin: 0 auto;
+            /* border: solid; */
+            padding: 20px;
+        }
+
+        .con input,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+        }
+
+        h2 {
+            margin-bottom: 10px;
+        }
+
+        .vdo {
+            border: solid;
+            width: 100%;
+            height: 30vh;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #3eb969;
+            border-radius: 5px;
+            cursor: pointer;
+            color: white;
+            border: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="con">
+        <input type="file" id="video-upload" accept="video/*" width="auto" height="100%">
+        <div>
+            <video class="vdo" id="video-views" controls autoplay volume="0.2" muted></video>
+            <div class="fileinput">
+                <label for="title">Title : <input type="text" id="title"></label>
+                <label for="texts">Texts : <textarea id="texts"></textarea></label>
+            </div>
+        </div>
+        <button id="submitBTN">Add Data</button>
+    </div>
+
+    <div class="con">
+        <div id="viewResult"></div>
+    </div>
+
+    <input type="range">
+    <audio src="" id="audio" controls volume="0.8"></audio>
+
+    <script>
+        let videoUpload = document.getElementById("video-upload");
+        let videoViews = document.getElementById("video-views");
+        let title = document.getElementById("title");
+        let texts = document.getElementById("texts");
+        let submitBTN = document.getElementById("submitBTN");
+        let viewResult = document.getElementById("viewResult");
+
+        videoUpload.addEventListener('change',(e)=>{
+            let vfile = e.target.files[0];
+
+            let reader = new FileReader()
+
+            reader.addEventListener("load", ()=>{
+                let datas = reader.result;
+                videoViews.src = datas
+                audio.src = datas
+                console.log(datas);
+            })
+            reader.readAsDataURL(vfile)
+        })
+    </script>
+</body>
+
+</html>

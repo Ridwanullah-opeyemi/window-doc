@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Camera App</title>
+</head>
+
+<body>
+
+    <button id="start-camera">Start Camera</button>
+    <button id="take-photo">Take Photo</button>
+    <br><br>
+    <video id="video" width="300" height="200" autoplay></video>
+    <br><br>
+    <canvas id="canvas" style="display:none;"></canvas>
+    <img id="photo" alt="Captured Photo" width="300">
+
+    <script>
+        // Get the elements from the HTML
+        const startCameraButton = document.getElementById('start-camera'); // Button to start the camera
+        const takePhotoButton = document.getElementById('take-photo'); // Button to take a photo
+        const video = document.getElementById('video'); // Video element to show the webcam feed
+        const canvas = document.getElementById('canvas'); // Canvas to capture the image
+        const photo = document.getElementById('photo'); // Image element to display the captured photo
+
+        // 📷 Start the camera when the button is clicked
+        startCameraButton.addEventListener('click', () => {
+            // Ask the user for permission to use the camera
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(stream => {
+                    video.srcObject = stream; // Display the video stream in the <video> element
+                })
+                .catch(error => {
+                    alert('Camera access denied or not available.'); // Show an error if the camera is not accessible
+                });
+        });
+
+        // 🖼 Take a photo when the button is clicked
+        takePhotoButton.addEventListener('click', () => {
+            const ctx = canvas.getContext('2d'); // Get the drawing tool for the canvas
+            canvas.width = video.videoWidth; // Set canvas width to match video width
+            canvas.height = video.videoHeight; // Set canvas height to match video height
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height); // Draw the video frame onto the canvas
+
+            // Convert the canvas drawing into an image and display it in the <img> tag
+            photo.src = canvas.toDataURL('image/png');
+        });
+
+    </script>
+</body>
+
+</html>

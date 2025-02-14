@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Recorder</title>
+</head>
+
+<body>
+
+    <h2>Simple Audio Recorder</h2>
+
+    <button id="start-recording">Start Recording</button>
+    <button id="stop-recording" disabled>Stop Recording</button>
+
+    <br><br>
+
+    <audio id="audio" controls></audio> <!-- For playing recorded audio -->
+    <br><br>
+
+    <a id="download-audio" style="display: none;" href="#">Download Audio</a>
+
+    <script>
+        // Get the HTML elements
+        const startRecordingButton = document.getElementById('start-recording');
+        const stopRecordingButton = document.getElementById('stop-recording');
+        const audio = document.getElementById('audio');
+        const downloadButton = document.getElementById('download-audio');
+
+        let mediaRecorder; // To record audio
+        let recordedChunks = []; // Store recorded audio data
+
+        // 🎤 Start recording audio
+        startRecordingButton.addEventListener('click', () => {
+            navigator.mediaDevices.getUserMedia({ audio: true }) // Request only microphone access
+                .then(stream => {
+                    mediaRecorder = new MediaRecorder(stream);
+                    recordedChunks = []; // Clear previous recordings
+
+                    mediaRecorder.ondataavailable = event => {
+                        if (event.data.size > 0) {
+                            recordedChunks.push(event.data); // Save audio data
+                        }
+                    };
+
+                    mediaRecorder.onstop = () => {
+                        const blob = new Blob(recordedChunks, { type: 'audio/mp3' }); // Create an audio file
+                        const url = URL.createObjectURL(blob);
+                        audio.src = url; // Set the audio player to play the recorded audio
+                        downloadButton.href = url;
+                        downloadButton.download = "recorded-audio.mp3";
+                        downloadButton.style.display = "block"; // Show download button
+                    };
+
+                    mediaRecorder.start(); // Start recording
+                    startRecordingButton.disabled = true;
+                    stopRecordingButton.disabled = false;
+                })
+                .catch(error => {
+                    alert('Microphone access denied or not available.');
+                });
+        });
+
+        // ⏹ Stop recording
+        stopRecordingButton.addEventListener('click', () => {
+            mediaRecorder.stop(); // Stop recording
+            startRecordingButton.disabled = false;
+            stopRecordingButton.disabled = true;
+        });
+
+    </script>
+
+</body>
+
+</html>
